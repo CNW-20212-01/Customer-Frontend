@@ -25,7 +25,9 @@ const CartList = ({
 					/>
 				))}
 				{cartItems.length === 0 &&
-					<h3>Your Cart is Empty</h3>
+					<div style={{display: 'flex', justifyContent: 'center'}}>
+						<h3>Your Cart is Empty</h3>
+					</div>
 				}
 			</React.Fragment>
 		</div>
