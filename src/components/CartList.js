@@ -27,6 +27,8 @@ const CartList = ({
 				{cartItems.length === 0 &&
 					<h3>Your Cart is Empty</h3>
 				}
+				<button type="button" class="btn-checkout">Checkout</button>
+				
 			</React.Fragment>
 		</div>
 	);
