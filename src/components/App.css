@@ -274,19 +274,25 @@ html{
 	font-size: inherit;
 	font-weight: 400;
 	text-transform: uppercase;
-
+	border-radius: 5px;
 }
+
+.book-list-item .cart-button:hover{
+	background-color: #e8475f;
+}
+
 .btn-checkout{
 	display: flex;
 	margin: 1.5rem auto 0 auto;
 	padding: 12px 20px;
 	border: none;
-	background: #ff6161;
-	color: var(--bg-color);
+	background-color: #da304a;
+	color: #fff;
 	font-size: 1rem;
 	font-weight: 500;
 	cursor: pointer;
+	border-radius: 5px;
 }
 .btn-checkout:hover{
-	background: yellow;
+	background-color: #e8475f;
 }
