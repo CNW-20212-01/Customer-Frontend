@@ -7,7 +7,7 @@ const BookList = ({books, addBookToCart, cartItems}) =>(
 			<React.Fragment>
 			{books.map(book =>
 				<BookCard  
-					key={book.id}
+					key={book.book_id}
 				 	book={book} 
 				 	addBookToCart={addBookToCart}
 				 	cartItems={cartItems}

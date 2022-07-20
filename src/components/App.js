@@ -1,138 +1,130 @@
-import React, { Component } from 'react';
-import {books} from './data';
+import React, { useEffect, useState } from 'react';
 import Header from './Header';
 import BookList from './BookList';
 import CartList from './CartList';
 import './App.css';
 
-class App extends Component {
-  constructor(props){
-    super(props);
-    this.state={
-      keyword: '',
-      cart: [],
-      isMobile: false,
-      cartTotal: 0,
-      openCart: false,
-    };
-    this.handleSearchChange = this.handleSearchChange.bind(this);
-    this.addBookToCart = this.addBookToCart.bind(this);
-    this.handleCartOpen = this.handleCartOpen.bind(this);
-    this.removeBookFromCart = this.removeBookFromCart.bind(this);
-    this.handleIncreaseQuantity = this.handleIncreaseQuantity.bind(this);
-    this.handleDecreaseQuantity = this.handleDecreaseQuantity.bind(this);
-    this.handleMobileSearch = this.handleMobileSearch.bind(this);
-    this.handleBackClick = this.handleBackClick.bind(this);
-  }
-  handleSearchChange(e){
-    this.setState({
-      keyword: e.target.value.toLowerCase()
+//import {books} from './data';
 
-    });
+const API_BOOKS_ENDPOINT = process.env.REACT_APP_API_BOOKS_ENDPOINT;
+
+const App = () => {
+  const [books, setBooks] = useState([]);
+  const [keyword, setKeyword] = useState('');
+  const [cart, setCart] = useState([]);
+  const [cartTotal, setCartTotal] = useState(0);
+  const [openCart, setOpenCart] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const handleSearchChange = (e) => {
+    setKeyword(e.target.value.toLowerCase());
   }
-  handleSearchSubmit(e){
+
+  const handleSearchSubmit = (e) => {
     e.preventDefault();
   }
-  handleMobileSearch(){
-    this.setState({
-      isMobile: true
-    })
-  }
-  handleBackClick(){
-    this.setState({
-      isMobile: false,
-      keyword: '',
-    })
-  }
-  addBookToCart(book){
-    let cartItems = this.state.cart.slice();
-    let cartTotal = this.state.cartTotal;
-    let doesBookExist = cartItems.filter(item=> item.id=== book.id).length > 0;
-    if(!doesBookExist){
-      cartItems.push({...book, quantity: 1});
-      this.setState({
-        cart: cartItems,
-        cartTotal: cartTotal += book.price,
-      });
-    }
-  }
-  removeBookFromCart(book){
-    let cartItems=  this.state.cart.slice();
-    let cartTotal = this.state.cartTotal;
-    cartItems = cartItems.filter(cartItem=> cartItem.id !== book.id)
-    this.setState({
-      cart: cartItems,
-      cartTotal: cartTotal -= (book.price * book.quantity)
-    });
 
-  }
-  handleIncreaseQuantity(book){
-    let cartItems = this.state.cart.slice();
-    let cartTotal = this.state.cartTotal;
-    let bookIndex = cartItems.findIndex(item => item.id===book.id);
-    cartItems[bookIndex].quantity += 1;
-    this.setState({
-      cart: cartItems,
-      cartTotal: cartTotal += book.price,
-    });
-  }
-  handleDecreaseQuantity(book){
-    let cartItems = this.state.cart.slice();
-    let cartTotal = this.state.cartTotal;
-    let bookIndex = cartItems.findIndex(item => item.id===book.id);
-    let currentQuantity = cartItems[bookIndex].quantity;
-    if(currentQuantity > 1){
-      cartItems[bookIndex].quantity -= 1;
-      this.setState({
-        cart: cartItems,
-        cartTotal: cartTotal -= book.price,
-      });
-    }else{
-      // decreasing quantity from 1 to 0 should remove book from cart.
-      this.removeBookFromCart(book);
+  const addBookToCart = (book) => {
+    let cartItems = cart.slice();
+    let doesBookExist = cartItems.filter(item => item.book_id === book.book_id).length > 0;
+    if (!doesBookExist) {
+      cartItems.push({...book, quantity: 1});
+      setCart(cartItems);
+      setCartTotal(cartTotal => cartTotal + book.price);
     }
   }
-  handleCartOpen(){
-    this.setState({
-      openCart: !this.state.openCart,
-    });
+
+  const removeBookFromCart = (book) => {
+    let cartItems = cart.slice();
+    cartItems = cartItems.filter(cartItem=> cartItem.book_id !== book.book_id)
+    setCart(cartItems);
+    setCartTotal(cartTotal => cartTotal - (book.price * book.quantity));
   }
-  render() {
-    let {keyword, cart, cartTotal, isMobile} = this.state;
-    const filteredBooks = books.filter((book)=>{
-      let bookTitle = book.title.toLowerCase();
-      return bookTitle.indexOf(keyword) > -1;
-    });
-    return (
-    	<div>
-    		<Header 
-          handleSearchChange={this.handleSearchChange}
-          cartCount={this.state.cart.length}
-          handleCartOpen={this.handleCartOpen}
-          keyword={keyword}
-          isMobile={isMobile}
-          handleMobileSearch={this.handleMobileSearch}
-          handleBackClick = {this.handleBackClick}
-          handleSearchSubmit={this.handleSearchSubmit}
+
+  const handleIncreaseQuantity = (book) => {
+    let cartItems = cart.slice();
+    let bookIndex = cartItems.findIndex(item => item.book_id === book.book_id);
+    cartItems[bookIndex].quantity += 1;
+    setCart(cartItems);
+    setCartTotal(cartTotal => cartTotal + book.price);
+  }
+
+  const handleDecreaseQuantity = (book) => {
+    let cartItems = cart.slice();
+    let bookIndex = cartItems.findIndex(item => item.book_id === book.book_id);
+    let currentQuantity = cartItems[bookIndex].quantity;
+    if (currentQuantity > 1){
+      cartItems[bookIndex].quantity -= 1;
+      setCart(cartItems);
+      setCartTotal(cartTotal => cartTotal - book.price);
+    }else{
+      removeBookFromCart(book);
+    }
+  }
+
+  const handleCartOpen = () => {
+    setOpenCart(openCart => !openCart);
+  }
+
+  const fetchTableData = async () => {
+    await fetch(API_BOOKS_ENDPOINT, {
+      method: "GET"
+    })
+    .then(res => res.json())
+    .then(data => {
+      setBooks(data.map(item => ({
+        book_id: item.book_id,
+        book_name: item.Book_name,
+        genre: item.genre,
+        author_name: item.author_name,
+        price: item.price,
+        pages: item.pages,
+        publisher: item.publisher,
+        publishing_year: item.publishing_year,
+        purchased: item.purchased,
+        intro: item.intro,
+        image: item.image
+      })));
+      setIsLoading(false);
+    })
+    .catch(error => alert(error));
+  }
+
+  useEffect(() => {
+    fetchTableData();
+  }, []);
+
+  const filteredBooks = books.filter((book)=>{
+    let bookTitle = book.book_name.toLowerCase();
+    return bookTitle.indexOf(keyword) > -1;
+  });
+
+  return (
+    <div>
+      <Header 
+        handleSearchChange={handleSearchChange}
+        cartCount={cart.length}
+        handleCartOpen={handleCartOpen}
+        keyword={keyword}
+        handleSearchSubmit={handleSearchSubmit}
+      />
+      {!isLoading && <div className="container">
+        <BookList books={filteredBooks}
+                  addBookToCart={addBookToCart}
+                  cartItems={cart}
         />
-	    	<div className="container">
-		    	<BookList books={filteredBooks}
-                    addBookToCart={this.addBookToCart}
-                    cartItems={cart}
-         />
-        <div className={`cart-container ${this.state.openCart? 'cart-open' : ''}`}>
+        <div className={`cart-container ${openCart? 'cart-open' : ''}`}>
           <CartList 
             cartItems={cart}
             cartTotal={cartTotal}
-            removeBookFromCart={this.removeBookFromCart}
-            handleIncreaseQuantity={this.handleIncreaseQuantity}
-            handleDecreaseQuantity={this.handleDecreaseQuantity}
+            removeBookFromCart={removeBookFromCart}
+            handleIncreaseQuantity={handleIncreaseQuantity}
+            handleDecreaseQuantity={handleDecreaseQuantity}
           />
         </div>
-	     	</div>
-	    </div>
-    );
-  }
+      </div>}
+    </div>
+  );
 }
 
 export default App;

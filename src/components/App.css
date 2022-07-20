@@ -107,7 +107,6 @@ html{
 	padding-top: 66px;
 	font-family: 'Roboto', sans-serif ;
 	color: #333;
-	background-image: url('./images/bg.jpg');
 	background-attachment: fixed;
 	background-size: 100% auto; 
 }
@@ -242,7 +241,7 @@ html{
 	margin: 16px;
 	background-color: #fff;
 	text-align: center;
-	box-shadow: 0px 1px 2px 1px #e1e1e1;
+	box-shadow: 0px 1px 2px 2px #e1e1e1;
 	color: #333;
 	font-size: 16px;
 	font-weight: 600px;

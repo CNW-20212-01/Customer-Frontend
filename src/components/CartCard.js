@@ -4,9 +4,9 @@ import React from 'react';
 const CartCard = ({item, removeBookFromCart, handleIncreaseQuantity, handleDecreaseQuantity}) =>{
 	return(
 		<div className="cart-list-item">
-			<img src={item.thumbnail} alt={item.title}/>
+			<img src={item.image} alt={item.book_name}/>
 			<div className="cart-item-content">
-				<p>{item.title}</p>
+				<p>{item.book_name}</p>
 				<p className="cart-item-price">
 					<i className="fas fa-dollar-sign"></i> {`${item.price * item.quantity}`}
 				</p>

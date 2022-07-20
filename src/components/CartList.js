@@ -8,6 +8,13 @@ const CartList = ({
 		handleIncreaseQuantity,
 		handleDecreaseQuantity
 	}) =>{
+
+	const handleOnClick = () => {
+		if (window !== undefined) {
+			window.location = window.location.origin + '/checkout';
+		}
+	}
+
 	return(
 		<div className="cart-list">
 			<React.Fragment>
@@ -17,7 +24,7 @@ const CartList = ({
 				<hr />
 				{cartItems.map(item=>(
 					<CartCard 
-						key={`cart-${item.id}`} 
+						key={`cart-${item.book_id}`} 
 						item={item}
 						removeBookFromCart={removeBookFromCart}
 						handleIncreaseQuantity={handleIncreaseQuantity}
@@ -29,7 +36,7 @@ const CartList = ({
 						<h3>Your Cart is Empty</h3>
 					</div>
 				}
-				{cartItems.length !== 0 && <button type="button" class="btn-checkout">CHECKOUT</button>}
+				{cartItems.length !== 0 && <button type="button" class="btn-checkout" onClick={handleOnClick}>CHECKOUT</button>}
 				
 			</React.Fragment>
 		</div>
