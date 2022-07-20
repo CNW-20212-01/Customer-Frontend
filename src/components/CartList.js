@@ -11,6 +11,7 @@ const CartList = ({
 
 	const handleOnClick = () => {
 		if (window !== undefined) {
+			localStorage.setItem("TOTAL", cartTotal);
 			window.location = window.location.origin + '/checkout';
 		}
 	}
