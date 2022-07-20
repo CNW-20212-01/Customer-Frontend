@@ -12,6 +12,7 @@ const CartList = ({
 	const handleOnClick = () => {
 		if (window !== undefined) {
 			localStorage.setItem("TOTAL", cartTotal);
+			localStorage.setItem("CART_ITEMS", JSON.stringify(cartItems));
 			window.location = window.location.origin + '/checkout';
 		}
 	}

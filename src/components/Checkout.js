@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import "./Checkout.css";
 
+const API_SUBMIT_BILL_ENDPOINT = process.env.REACT_APP_API_SUBMIT_BILL_ENDPOINT;
+
 const Checkout = () => {
 
     const [name, setName] = useState('');
@@ -10,9 +12,36 @@ const Checkout = () => {
 
     const total = window !== undefined ? localStorage.getItem("TOTAL") : 0;
 
-    const handleOnClick = () => {;
+    const cartItems = window !== undefined ? localStorage.getItem("CART_ITEMS") : null;
+
+    const handleOnBack = async () => {
+        if (window !== undefined) {
+            window.location = window.location.origin;
+        }
+    }
+
+    const handleOnSubmit = async (e) => {
+        e.preventDefault();
+
 		if (window !== undefined) {
-			window.location = window.location.origin;
+            await fetch(API_SUBMIT_BILL_ENDPOINT, {
+                method: "POST",
+                body: JSON.stringify({
+                    name: name,
+                    address: address,
+                    phone_number: phoneNumber,
+                    total_money: total,
+                    bookList: JSON.parse(cartItems).map(item => ({
+                        book_id: item.book_id,
+                        quantity: item.quantity
+                    }))
+                })
+            })
+            .catch(error => alert(error));
+
+            alert("Submitted successfully, thanks you!!!");
+
+            window.location = window.location.origin;
 		}
 	}
 
@@ -20,7 +49,7 @@ const Checkout = () => {
         <div>
             <header className="header" style={{position: "relative"}}>
 				<div className="main-title"><h1>Online Book Store</h1></div>
-                <button className="btn-return" onClick={() => handleOnClick()}>
+                <button className="btn-return" onClick={() => handleOnBack()}>
                     BACK TO MAIN PAGE
                 </button>
             </header>
@@ -29,7 +58,7 @@ const Checkout = () => {
                     <h1>Checkout</h1>
                 </div>
                 <div className="input-container">
-                    <form>
+                    <form id="input-form" onSubmit={handleOnSubmit}>
                         <label htmlFor="name">Name</label>
                         <input
                             id="name"
@@ -68,7 +97,7 @@ const Checkout = () => {
                     <p>Total: {total}$</p>
                 </div>
                 <div className="btn-submit">
-                    <input type="submit" value="SUBMIT" />
+                    <input type="submit" value="SUBMIT" form="input-form"/>
                 </div>
             </div>
         </div>
