@@ -1,11 +1,12 @@
 import React from 'react';
 
-const BookCard = ({history, book, addBookToCart, cartItems}) => {
+const BookCard = ({book, addBookToCart, cartItems}) => {
 	let doesBookExistInCart = cartItems.filter(item=> item.id === book.id).length > 0;
 
 	const handleOnClick = () => {;
 		if (window !== undefined) {
 			localStorage.setItem("BOOK_THUMNAIL", book.thumbnail);
+			localStorage.setItem("BOOK_TITLE", book.title);
 			window.location = window.location.origin + '/book_content';
 		}
 	}

@@ -293,6 +293,24 @@ html{
 	cursor: pointer;
 	border-radius: 5px;
 }
+
 .btn-checkout:hover{
+	background-color: #e8475f;
+}
+
+.btn-return{
+	display: flex;
+	margin: 0 auto 0 auto;
+	padding: 12px 20px;
+	border: none;
+	background-color: #da304a;
+	color: #fff;
+	font-size: 1.2rem;
+	font-weight: bold;
+	cursor: pointer;
+	border-radius: 5px;
+}
+
+.btn-return:hover{
 	background-color: #e8475f;
 }
